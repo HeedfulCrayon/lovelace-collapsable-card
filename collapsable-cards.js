@@ -217,6 +217,7 @@ class VerticalStackInCard extends HTMLElement {
         clip-path: unset;
         border: unset;
         white-space: unset;
+	margin-bottom: 8px;
 	border-bottom-style: groove;
 	border-bottom-width: 4px;
 	border-bottom-color: var(--divider-color);
