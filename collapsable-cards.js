@@ -178,7 +178,7 @@ class VerticalStackInCard extends HTMLElement {
       .toggle-button-${this.id} {
         color: var(--primary-text-color);
         text-align: left;
-        background: none;
+        background: var(--card-background-color);
         border: none;
         margin: 0;
         display: flex;
@@ -190,7 +190,7 @@ class VerticalStackInCard extends HTMLElement {
       }
       .toggle-button-${this.id}:focus {
         outline: none;
-        background-color: var(--divider-color);
+        background-color: var(--card-background-color);
       }
 
       .card-list-${this.id} {
