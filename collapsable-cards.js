@@ -217,6 +217,9 @@ class VerticalStackInCard extends HTMLElement {
         clip-path: unset;
         border: unset;
         white-space: unset;
+	border-bottom-style: groove;
+	border-bottom-width: 4px;
+	border-bottom-color: var(--divider-color);
       }
 
       .toggle-button__icon-${this.id} {
@@ -225,9 +228,6 @@ class VerticalStackInCard extends HTMLElement {
 
       .type-custom-collapsable-cards {
         background: transparent;
-	border-bottom-style: groove;
-	border-bottom-width: 4px;
-	border-bottom-color: var(--divider-color);
       }
     `;
   }
