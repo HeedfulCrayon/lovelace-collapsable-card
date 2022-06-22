@@ -6,6 +6,15 @@ class VerticalStackInCard extends HTMLElement {
   }
 
   setConfig(config) {
+    
+
+    const alignments = {
+      left: 'left',
+      center: 'center',
+      right: 'right',
+      justify: 'space-between',
+      even: 'space-even'
+    }
     this.id = Math.round(Math.random() * 10000)
     this._cardSize = {};
     this._cardSize.promise = new Promise((resolve) => (this._cardSize.resolve = resolve));
@@ -14,14 +23,32 @@ class VerticalStackInCard extends HTMLElement {
       throw new Error('Supply the `cards` property');
     }
 
-	let isMobile = window.matchMedia("only screen and (max-width: 760px)").matches;
-	if (config.defaultOpen == true) {
-	  this.isToggled = true;
-	} else if (config.defaultOpen == 'desktop-only' && !isMobile) {
-	  this.isToggled = true;
-	} else {
-	  this.isToggled = false;
-	}
+    let isMobile = window.matchMedia("only screen and (max-width: 760px)").matches;
+    if (config.defaultOpen == true) {
+      this.isToggled = true;
+    } else if (config.defaultOpen == 'desktop-only' && !isMobile) {
+      this.isToggled = true;
+    } else {
+      this.isToggled = false;
+    }
+
+    if (!config.expand_upward)
+    {
+      this.expand_upward = false;
+    } else {
+      this.expand_upward = config.expand_upward;
+    }
+
+    if (config.show_icon === undefined) {
+      this.show_icon = true;
+    } else {
+      this.show_icon = config.show_icon;
+    }
+
+    if (config.content_alignment && Object.keys(alignments).includes(config.content_alignment))
+    {
+      this.content_alignment = alignments[config.content_alignment];
+    }
 
     this._config = config;
     this._refCards = [];
@@ -49,8 +76,13 @@ class VerticalStackInCard extends HTMLElement {
     // create the button
     const toggleButton = this.createToggleButton()
 
-    card.appendChild(toggleButton);
-    card.appendChild(cardList);
+    if (this.expand_upward == true) {
+      card.appendChild(cardList);
+      card.appendChild(toggleButton);
+    } else {
+      card.appendChild(toggleButton);
+      card.appendChild(cardList);
+    }
 
     while (this.hasChildNodes()) {
       this.removeChild(this.lastChild);
@@ -75,25 +107,47 @@ class VerticalStackInCard extends HTMLElement {
 
   createToggleButton() {
     const toggleButton = document.createElement('button');
-    toggleButton.innerHTML = this._config.title || 'Toggle'
+    if (this._config.expand_text && !this.isToggled) {
+      toggleButton.innerHTML = this._config.expand_text;
+    } else if (this._config.collapse_text && this.isToggled)
+    {
+      toggleButton.innerHTML = this._config.collapse_text;
+    } else {
+      toggleButton.innerHTML = this._config.title || 'Toggle'
+    } 
     toggleButton.className = 'card-content toggle-button-' + this.id
     toggleButton.addEventListener('click', () => {
       this.isToggled = !this.isToggled
       this.styleCard(this.isToggled)
     })
 
-    const icon = document.createElement('ha-icon');
-    icon.className = 'toggle-button__icon-' + this.id
-    icon.setAttribute('icon', 'mdi:chevron-down')
-    this.icon = icon
-    toggleButton.appendChild(icon)
+    if (this.show_icon) {
+      const icon = document.createElement('ha-icon');
+      icon.className = 'toggle-button__icon-' + this.id
+      icon.setAttribute('icon', this._config.expand_upward ? 'mdi:chevron-up' : 'mdi:chevron-down')
+      this.icon = icon
+      toggleButton.appendChild(icon)
+    }
+    this.toggleButton = toggleButton;
 
     return toggleButton
   }
 
   styleCard(isToggled) {
     this.cardList.classList[isToggled ? 'add' : 'remove']('is-toggled')
-    this.icon.setAttribute('icon', isToggled ? 'mdi:chevron-up' : 'mdi:chevron-down')
+    // this.cardList.classList[isToggled ? 'add' : 'remove']('expanding')
+    // this.cardList.classList[isToggled ? 'remove' : 'add']('collapsing')
+    if (this.show_icon) {
+      const openIcon = this.expand_upward ? 'mdi:chevron-up' : 'mdi:chevron-down'
+      const closeIcon = this.expand_upward ? 'mdi:chevron-down' : 'mdi:chevron-up'
+      this.icon.setAttribute('icon', isToggled ? closeIcon : openIcon )
+    }
+    if (this._config.expand_text || this._config.collapse_text) {
+      this.toggleButton.innerHTML = isToggled ? this._config.collapse_text : this._config.expand_text;
+      if (this.show_icon) {
+        this.toggleButton.appendChild(this.icon);
+      }
+    }
   }
 
   async createCardElement(cardConfig) {
@@ -182,9 +236,10 @@ class VerticalStackInCard extends HTMLElement {
         border: none;
         margin: 0;
         display: flex;
-        justify-content: space-between;
+        justify-content: ${this.content_alignment ? this.content_alignment : 'space-between'};
         align-items: center;
         width: 100%;
+        padding: 16px;
         border-radius: var(--ha-card-border-radius, 4px);
         ${this._config.buttonStyle || ''}
       }
@@ -217,11 +272,8 @@ class VerticalStackInCard extends HTMLElement {
         clip-path: unset;
         border: unset;
         white-space: unset;
-	padding-top: 8px;
-	padding-bottom: 8px;
-	border-bottom-style: groove;
-	border-bottom-width: 4px;
-	border-bottom-color: var(--divider-color);
+        ${this.expand_upward ? 'padding-bottom: 8px;' : ''}
+        ${this.expand_upward ? '' : 'padding-top: 8px;'}
       }
 
       .toggle-button__icon-${this.id} {
@@ -230,6 +282,74 @@ class VerticalStackInCard extends HTMLElement {
 
       .type-custom-collapsable-cards {
         background: transparent;
+      }
+
+      .expanding {
+        animation-name: expand;
+        animation-duration: 1s;
+        animation-timing-function: ease-out;
+      }
+
+      @keyframes expand {
+        0% { 
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+          clip: rect(0 0 0 0);
+          clip-path: inset(50%);
+          border: 0;
+          white-space: nowrap;
+        }
+        100% {
+          position: unset;
+          width: unset;
+          height: unset;
+          margin: unset;
+          padding: unset;
+          overflow: unset;
+          clip: unset;
+          clip-path: unset;
+          border: unset;
+          white-space: unset;
+          padding-bottom: 8px;
+        }
+      }
+
+      .collapsing {
+        animation-name: collapse;
+        animation-duration: 1s;
+        animation-timing-function: ease-out;
+      }
+
+      @keyframes collapse {
+        0% { 
+          position: unset;
+          width: unset;
+          height: unset;
+          margin: unset;
+          padding: unset;
+          overflow: unset;
+          clip: unset;
+          clip-path: unset;
+          border: unset;
+          white-space: unset;
+          padding-bottom: 8px;
+        }
+        100% {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+          clip: rect(0 0 0 0);
+          clip-path: inset(50%);
+          border: 0;
+          white-space: nowrap;
+        }
       }
     `;
   }
