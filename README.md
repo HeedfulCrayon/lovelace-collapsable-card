@@ -13,7 +13,10 @@ Big thanks to [ofekashery, the author of vertical-stack-in-card](https://github.
 | type       | string  |  | `custom:collapsable-cards`           |
 | cards      | list    |  | List of cards                         |
 | defaultOpen | string | false | Whether the cards should be visible by default. Can also be set to `desktop-only` to be open by default on desktop and collapsed by default on mobile. Or `contain-toggled` to open only if there are active entities |
-| title      | string  | "Toggle" | Dropdown title                       |
+| expand_upward | bool | false | Expands the list of cards above the toggle button |
+| show_icon | bool | true | Whether the chevron icon should be visible or not |
+| content_alignment | string | "justify" | Determines how the content of the toggle button should be aligned.  Options are `left`, `center`, `right`, `justify` and `even`
+| title      | string  | "Toggle" | Button title                       |
 | buttonStyle| string  | "" | CSS overrides for the dropdown toggle button |
 
 ## Installation
@@ -22,7 +25,7 @@ Big thanks to [ofekashery, the author of vertical-stack-in-card](https://github.
 
 Add this repository via HACS Custom repositories 
 
-https://github.com/RossMcMillan92/lovelace-collapsable-cards
+https://github.com/HeedfulCrayon/lovelace-collapsable-cards
 
 ([How to add Custom Repositories](https://hacs.xyz/docs/faq/custom_repositories/))
  
