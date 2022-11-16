@@ -1,4 +1,8 @@
-console.log(`%ccollapsable-cards\n%cVersion: ${'0.0.1'}`, 'color: rebeccapurple; font-weight: bold;', '');
+console.log(
+  `%ccollapsable-cards\n%cVersion: ${"0.0.1"}`,
+  "color: rebeccapurple; font-weight: bold;",
+  ""
+);
 
 class VerticalStackInCard extends HTMLElement {
   constructor() {
@@ -6,34 +10,35 @@ class VerticalStackInCard extends HTMLElement {
   }
 
   setConfig(config) {
-    
-
     const alignments = {
-      left: 'left',
-      center: 'center',
-      right: 'right',
-      justify: 'space-between',
-      even: 'space-even'
-    }
-    this.id = Math.round(Math.random() * 10000)
+      left: "left",
+      center: "center",
+      right: "right",
+      justify: "space-between",
+      even: "space-even",
+    };
+    this.id = Math.round(Math.random() * 10000);
     this._cardSize = {};
-    this._cardSize.promise = new Promise((resolve) => (this._cardSize.resolve = resolve));
+    this._cardSize.promise = new Promise(
+      (resolve) => (this._cardSize.resolve = resolve)
+    );
 
     if (!config || !config.cards || !Array.isArray(config.cards)) {
-      throw new Error('Supply the `cards` property');
+      throw new Error("Supply the `cards` property");
     }
 
-    let isMobile = window.matchMedia("only screen and (max-width: 760px)").matches;
+    let isMobile = window.matchMedia(
+      "only screen and (max-width: 760px)"
+    ).matches;
     if (config.defaultOpen == true) {
       this.isToggled = true;
-    } else if (config.defaultOpen == 'desktop-only' && !isMobile) {
+    } else if (config.defaultOpen == "desktop-only" && !isMobile) {
       this.isToggled = true;
     } else {
       this.isToggled = false;
     }
 
-    if (!config.expand_upward)
-    {
+    if (!config.expand_upward) {
       this.expand_upward = false;
     } else {
       this.expand_upward = config.expand_upward;
@@ -45,8 +50,16 @@ class VerticalStackInCard extends HTMLElement {
       this.show_icon = config.show_icon;
     }
 
-    if (config.content_alignment && Object.keys(alignments).includes(config.content_alignment))
-    {
+    if (config.head === undefined) {
+      this.show_head = false;
+    } else {
+      this.show_head = true;
+    }
+
+    if (
+      config.content_alignment &&
+      Object.keys(alignments).includes(config.content_alignment)
+    ) {
       this.content_alignment = alignments[config.content_alignment];
     }
 
@@ -60,21 +73,30 @@ class VerticalStackInCard extends HTMLElement {
     if (window.loadCardHelpers) {
       this.helpers = await window.loadCardHelpers();
     }
-    const promises = config.cards.map((config) => this.createCardElement(config));
+
+    if (this.show_head) {
+      const head_promise = this.createCardElement(config.head);
+      this.head = await Promise.resolve(head_promise);
+      this.head.className = "head-card-" + this.id;
+    }
+
+    const promises = config.cards.map((config) =>
+      this.createCardElement(config)
+    );
     this._refCards = await Promise.all(promises);
 
     // Create the card
-    const card = document.createElement('ha-card');
-    this.card = card
-    const cardList = document.createElement('div');
-    this.cardList = cardList
-    card.style.overflow = 'hidden';
+    const card = document.createElement("ha-card");
+    this.card = card;
+    const cardList = document.createElement("div");
+    this.cardList = cardList;
+    card.style.overflow = "hidden";
     this._refCards.forEach((card) => cardList.appendChild(card));
-    this.cardList.className = 'card-list-' + this.id
-    this.cardList.classList[this.isToggled ? 'add' : 'remove']('is-toggled')
+    this.cardList.className = "card-list-" + this.id;
+    this.cardList.classList[this.isToggled ? "add" : "remove"]("is-toggled");
 
     // create the button
-    const toggleButton = this.createToggleButton()
+    const toggleButton = this.createToggleButton();
 
     if (this.expand_upward == true) {
       card.appendChild(cardList);
@@ -92,12 +114,12 @@ class VerticalStackInCard extends HTMLElement {
     // Calculate card size
     this._cardSize.resolve();
 
-    const styleTag = document.createElement('style')
-    styleTag.innerHTML = this.getStyles()
+    const styleTag = document.createElement("style");
+    styleTag.innerHTML = this.getStyles();
     card.appendChild(styleTag);
 
     if (
-      config.defaultOpen === 'contain-toggled' && 
+      config.defaultOpen === "contain-toggled" &&
       config.cards.filter((c) => this._hass.states[c.entity]?.state === "on")
         .length > 0
     ) {
@@ -106,44 +128,59 @@ class VerticalStackInCard extends HTMLElement {
   }
 
   createToggleButton() {
-    const toggleButton = document.createElement('button');
+    const toggleButton = document.createElement("button");
     if (this._config.expand_text && !this.isToggled) {
       toggleButton.innerHTML = this._config.expand_text;
-    } else if (this._config.collapse_text && this.isToggled)
-    {
+    } else if (this._config.collapse_text && this.isToggled) {
       toggleButton.innerHTML = this._config.collapse_text;
+    } else if (this.show_head) {
+      toggleButton.appendChild(this.head);
     } else {
-      toggleButton.innerHTML = this._config.title || 'Toggle'
-    } 
-    toggleButton.className = 'card-content toggle-button-' + this.id
-    toggleButton.addEventListener('click', () => {
-      this.isToggled = !this.isToggled
-      this.styleCard(this.isToggled)
-    })
+      toggleButton.innerHTML = this._config.title || "Toggle";
+    }
+    toggleButton.className = "card-content toggle-button-" + this.id;
+    toggleButton.addEventListener("click", () => {
+      this.isToggled = !this.isToggled;
+      this.styleCard(this.isToggled);
+    });
+
+    if (this.show_head) {
+      toggleButton.appendChild(this.head);
+    }
 
     if (this.show_icon) {
-      const icon = document.createElement('ha-icon');
-      icon.className = 'toggle-button__icon-' + this.id
-      icon.setAttribute('icon', this._config.expand_upward ? 'mdi:chevron-up' : 'mdi:chevron-down')
-      this.icon = icon
-      toggleButton.appendChild(icon)
+      const icon = document.createElement("ha-icon");
+      icon.className = "toggle-button__icon-" + this.id;
+      icon.setAttribute(
+        "icon",
+        this._config.expand_upward ? "mdi:chevron-up" : "mdi:chevron-down"
+      );
+      this.icon = icon;
+      toggleButton.appendChild(icon);
     }
+
     this.toggleButton = toggleButton;
 
-    return toggleButton
+    return toggleButton;
   }
 
   styleCard(isToggled) {
-    this.cardList.classList[isToggled ? 'add' : 'remove']('is-toggled')
+    this.cardList.classList[isToggled ? "add" : "remove"]("is-toggled");
     // this.cardList.classList[isToggled ? 'add' : 'remove']('expanding')
     // this.cardList.classList[isToggled ? 'remove' : 'add']('collapsing')
     if (this.show_icon) {
-      const openIcon = this.expand_upward ? 'mdi:chevron-up' : 'mdi:chevron-down'
-      const closeIcon = this.expand_upward ? 'mdi:chevron-down' : 'mdi:chevron-up'
-      this.icon.setAttribute('icon', isToggled ? closeIcon : openIcon )
+      const openIcon = this.expand_upward
+        ? "mdi:chevron-up"
+        : "mdi:chevron-down";
+      const closeIcon = this.expand_upward
+        ? "mdi:chevron-down"
+        : "mdi:chevron-up";
+      this.icon.setAttribute("icon", isToggled ? closeIcon : openIcon);
     }
     if (this._config.expand_text || this._config.collapse_text) {
-      this.toggleButton.innerHTML = isToggled ? this._config.collapse_text : this._config.expand_text;
+      this.toggleButton.innerHTML = isToggled
+        ? this._config.collapse_text
+        : this._config.expand_text;
       if (this.show_icon) {
         this.toggleButton.appendChild(this.icon);
       }
@@ -152,16 +189,16 @@ class VerticalStackInCard extends HTMLElement {
 
   async createCardElement(cardConfig) {
     const createError = (error, origConfig) => {
-      return createThing('hui-error-card', {
-        type: 'error',
+      return createThing("hui-error-card", {
+        type: "error",
         error,
-        origConfig
+        origConfig,
       });
     };
 
     const createThing = (tag, config) => {
       if (this.helpers) {
-        if (config.type === 'divider') {
+        if (config.type === "divider") {
           return this.helpers.createRowElement(config);
         } else {
           return this.helpers.createCardElement(config);
@@ -179,10 +216,10 @@ class VerticalStackInCard extends HTMLElement {
     };
 
     let tag = cardConfig.type;
-    if (tag.startsWith('divider')) {
+    if (tag.startsWith("divider")) {
       tag = `hui-divider-row`;
-    } else if (tag.startsWith('custom:')) {
-      tag = tag.substr('custom:'.length);
+    } else if (tag.startsWith("custom:")) {
+      tag = tag.substr("custom:".length);
     } else {
       tag = `hui-${tag}-card`;
     }
@@ -190,7 +227,7 @@ class VerticalStackInCard extends HTMLElement {
     const element = createThing(tag, cardConfig);
     element.hass = this._hass;
     element.addEventListener(
-      'll-rebuild',
+      "ll-rebuild",
       (ev) => {
         ev.stopPropagation();
         this.createCardElement(cardConfig).then(() => {
@@ -212,7 +249,7 @@ class VerticalStackInCard extends HTMLElement {
   }
 
   _computeCardSize(card) {
-    if (typeof card.getCardSize === 'function') {
+    if (typeof card.getCardSize === "function") {
       return card.getCardSize();
     }
     return customElements
@@ -229,19 +266,27 @@ class VerticalStackInCard extends HTMLElement {
 
   getStyles() {
     return `
+      .head-card-${this.id} {
+        grid-column: 1;
+        grid-row: 1;
+      }
+
       .toggle-button-${this.id} {
         color: var(--primary-text-color);
         text-align: left;
         background: var(--card-background-color);
         border: none;
         margin: 0;
-        display: flex;
-        justify-content: ${this.content_alignment ? this.content_alignment : 'space-between'};
+        display: grid;
+        justify-content: ${
+          this.content_alignment ? this.content_alignment : "space-between"
+        };
         align-items: center;
         width: 100%;
-        padding: 16px;
+        padding: 0px;
         border-radius: var(--ha-card-border-radius, 4px);
-        ${this._config.buttonStyle || ''}
+        align-self: start;
+        ${this._config.buttonStyle || ""}
       }
       .toggle-button-${this.id}:focus {
         outline: none;
@@ -272,12 +317,17 @@ class VerticalStackInCard extends HTMLElement {
         clip-path: unset;
         border: unset;
         white-space: unset;
-        ${this.expand_upward ? 'padding-bottom: 8px;' : ''}
-        ${this.expand_upward ? '' : 'padding-top: 8px;'}
+        ${this.expand_upward ? "padding-bottom: 8px;" : ""}
+        ${this.expand_upward ? "" : "padding-top: 8px;"}
       }
 
       .toggle-button__icon-${this.id} {
         color: var(--paper-item-icon-color, #aaa);
+        grid-column: 1;
+        grid-row: 1;
+        position: absolute;
+        top: 16px;
+        right: 16px;
       }
 
       .type-custom-collapsable-cards {
@@ -353,15 +403,15 @@ class VerticalStackInCard extends HTMLElement {
       }
     `;
   }
-
 }
 
-customElements.define('collapsable-cards', VerticalStackInCard);
+customElements.define("collapsable-cards", VerticalStackInCard);
 
 window.customCards = window.customCards || [];
 window.customCards.push({
   type: "collapsable-cards",
   name: "Collapsable Card",
   preview: false,
-  description: "The Collapsable Card allows you to hide other cards behind a dropdown toggle."
+  description:
+    "The Collapsable Card allows you to hide other cards behind a dropdown toggle.",
 });
