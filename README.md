@@ -12,6 +12,7 @@ Big thanks to [ofekashery, the author of vertical-stack-in-card](https://github.
 | ---------- | ------- | ------------ | ----------------------------------------- |
 | type       | string  |  | `custom:collapsable-cards`           |
 | cards      | list    |  | List of cards                         |
+| head       | card    |  | Card that will be displayed instead of toggle text |
 | defaultOpen | string | false | Whether the cards should be visible by default. Can also be set to `desktop-only` to be open by default on desktop and collapsed by default on mobile. Or `contain-toggled` to open only if there are active entities |
 | expand_upward | bool | false | Expands the list of cards above the toggle button |
 | show_icon | bool | true | Whether the chevron icon should be visible or not |
