@@ -1,6 +1,6 @@
 {
-    "name": "Collapsable cards",
-    "content_in_root": true,
-    "filename": "collapsable-cards.js",
-    "render_readme": true
+  "name": "Collapsable card",
+  "content_in_root": true,
+  "filename": "collapsable-card.js",
+  "render_readme": true
 }
