@@ -10,7 +10,7 @@ Big thanks to [ofekashery, the author of vertical-stack-in-card](https://github.
 
 | Name       | Type    | Default      | Description                               |
 | ---------- | ------- | ------------ | ----------------------------------------- |
-| type       | string  |  | `custom:collapsable-cards`           |
+| type       | string  |  | `custom:collapsable-card`           |
 | cards      | list    |  | List of cards                         |
 | head       | card    |  | Card that will be displayed instead of toggle text |
 | defaultOpen | string | false | Whether the cards should be visible by default. Can also be set to `desktop-only` to be open by default on desktop and collapsed by default on mobile. Or `contain-toggled` to open only if there are active entities |
@@ -36,7 +36,7 @@ https://github.com/HeedfulCrayon/lovelace-collapsable-cards
 # Manually
 [In-depth tutorial here](https://github.com/thomasloven/hass-config/wiki/Lovelace-Plugins), otherwise follow these steps:
 
-1. Install the `collapsable-cards` card by copying `collapsable-cards.js` to `<config directory>/www/collapsable-cards.js`
+1. Install the `collapsable-cards` card by copying `collapsable-card.js` to `<config directory>/www/collapsable-card.js`
 
 2. On your lovelace dashboard
     1. Click options
@@ -44,14 +44,14 @@ https://github.com/HeedfulCrayon/lovelace-collapsable-cards
     3. Click Options
     4. Manage resources
     5. Add resource
-        - URL: /local/collapsable-cards.js
+        - URL: /local/collapsable-card.js
         - Resource type: JavaScript module
 
 3. Add a custom card to your dashboard
 
 
 ```yaml
-type: 'custom:collapsable-cards'
+type: 'custom:collapsable-card'
 title: Office
 cards:
   - type: entities
