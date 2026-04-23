@@ -1,0 +1,21 @@
+services:
+  workspace:
+    build:
+      context: ..
+      dockerfile: Dockerfile.dev
+    command: /bin/sh -c "while sleep 1000; do :; done"
+    working_dir: /workspaces/lovelace-collapsable-card
+    volumes:
+      - ..:/workspaces/lovelace-collapsable-card:cached
+
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    restart: unless-stopped
+    depends_on:
+      - workspace
+    network_mode: service:workspace
+    environment:
+      TZ: ${TZ:-UTC}
+    volumes:
+      - ../ha-dev:/config
+      - ..:/config/www/lovelace-collapsable-card:ro

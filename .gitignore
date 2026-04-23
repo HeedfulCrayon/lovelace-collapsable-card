@@ -1,0 +1,14 @@
+ha-dev/.cloud/
+ha-dev/.HA_VERSION
+ha-dev/.ha_run.lock
+ha-dev/.storage/
+ha-dev/backups/
+ha-dev/deps/
+ha-dev/home-assistant.log
+ha-dev/home-assistant.log.1
+ha-dev/home-assistant.log.fault
+ha-dev/home-assistant_v2.db
+ha-dev/home-assistant_v2.db-shm
+ha-dev/home-assistant_v2.db-wal
+ha-dev/tts/
+ha-dev/.cache/
