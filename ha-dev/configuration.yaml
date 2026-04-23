@@ -18,7 +18,7 @@ homeassistant:
 lovelace:
   mode: yaml
   resources:
-    - url: /local/lovelace-collapsable-card/collapsable-card.js?v=0.0.2
+    - url: /local/lovelace-collapsable-card/collapsable-card.js?v=dev
       type: module
 
 input_boolean:
