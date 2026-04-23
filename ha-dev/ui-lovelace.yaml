@@ -9,7 +9,7 @@ views:
           This dashboard loads the repository version of `collapsable-card.js`.
 
           Resource URL:
-          `/local/lovelace-collapsable-card/collapsable-card.js?v=0.0.2`
+          `/local/lovelace-collapsable-card/collapsable-card.js?v=dev`
 
           Edit the source file, then refresh the page to test changes.
 
