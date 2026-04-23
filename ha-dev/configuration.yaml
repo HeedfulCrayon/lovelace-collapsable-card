@@ -1,0 +1,43 @@
+default_config:
+
+homeassistant:
+  name: Collapsable Card Dev
+  latitude: 37.7749
+  longitude: -122.4194
+  elevation: 0
+  unit_system: metric
+  time_zone: UTC
+  auth_providers:
+    - type: command_line
+      command: /bin/sh
+      args:
+        - /config/authenticate.sh
+      meta: true
+    - type: homeassistant
+
+lovelace:
+  mode: yaml
+  resources:
+    - url: /local/lovelace-collapsable-card/collapsable-card.js?v=dev
+      type: module
+
+input_boolean:
+  office_lamp:
+    name: Office Lamp
+    icon: mdi:desk-lamp
+  desk_fan:
+    name: Desk Fan
+    icon: mdi:fan
+  monitor_light:
+    name: Monitor Light
+    icon: mdi:monitor
+  background_music:
+    name: Background Music
+    icon: mdi:music
+  notifications:
+    name: Notifications
+    icon: mdi:bell
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml

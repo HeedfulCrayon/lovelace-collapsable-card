@@ -1,10 +1,6 @@
-console.log(`%ccollapsable-card\n%cVersion: ${"0.0.1"}`, "color: rebeccapurple; font-weight: bold;", "");
+console.log(`%ccollapsable-card\n%cVersion: ${"0.0.2"}`, "color: rebeccapurple; font-weight: bold;", "");
 
 class CollapsableCard extends HTMLElement {
-  constructor() {
-    super();
-  }
-
   setConfig(config) {
     const alignments = {
       left: "left",
@@ -123,6 +119,7 @@ class CollapsableCard extends HTMLElement {
 
   createToggleButton() {
     const toggleButton = document.createElement("button");
+    toggleButton.type = "button";
     if (this.show_head) {
       toggleButton.appendChild(this.head);
     } else if (this._config.expand_text && !this.isToggled) {
@@ -132,7 +129,7 @@ class CollapsableCard extends HTMLElement {
     } else {
       toggleButton.innerHTML = this._config.title || "Toggle";
     }
-    toggleButton.className = "card-content toggle-button-" + this.id;
+    toggleButton.className = "toggle-button toggle-button-" + this.id;
     if (!this.show_head) {
       toggleButton.addEventListener("click", () => {
         this.isToggled = !this.isToggled;
@@ -254,8 +251,17 @@ class CollapsableCard extends HTMLElement {
 
   async getCardSize() {
     await this._cardSize.promise;
-    const sizes = await Promise.all(this._refCards.map(this._computeCardSize));
-    return sizes.reduce((a, b) => a + b);
+    const sizes = await Promise.all(this._refCards.map((card) => this._computeCardSize(card)));
+    return sizes.reduce((total, size) => total + size, 0);
+  }
+
+  getGridOptions() {
+    return {
+      columns: 12,
+      rows: "auto",
+      min_columns: 3,
+      min_rows: 1,
+    };
   }
 
   getStyles() {

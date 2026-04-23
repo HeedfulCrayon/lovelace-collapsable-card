@@ -10,7 +10,7 @@ Big thanks to [ofekashery, the author of vertical-stack-in-card](https://github.
 
 | Name       | Type    | Default      | Description                               |
 | ---------- | ------- | ------------ | ----------------------------------------- |
-| type       | string  |  | `custom:collapsable-cards`           |
+| type       | string  |  | `custom:collapsable-card`           |
 | cards      | list    |  | List of cards                         |
 | head       | card    |  | Card that will be displayed instead of toggle text |
 | defaultOpen | string | false | Whether the cards should be visible by default. Can also be set to `desktop-only` to be open by default on desktop and collapsed by default on mobile. Or `contain-toggled` to open only if there are active entities |
@@ -36,7 +36,7 @@ https://github.com/HeedfulCrayon/lovelace-collapsable-cards
 # Manually
 [In-depth tutorial here](https://github.com/thomasloven/hass-config/wiki/Lovelace-Plugins), otherwise follow these steps:
 
-1. Install the `collapsable-cards` card by copying `collapsable-cards.js` to `<config directory>/www/collapsable-cards.js`
+1. Install the `collapsable-card` card by copying `collapsable-card.js` to `<config directory>/www/collapsable-card.js`
 
 2. On your lovelace dashboard
     1. Click options
@@ -44,14 +44,14 @@ https://github.com/HeedfulCrayon/lovelace-collapsable-cards
     3. Click Options
     4. Manage resources
     5. Add resource
-        - URL: /local/collapsable-cards.js
+        - URL: /local/collapsable-card.js
         - Resource type: JavaScript module
 
 3. Add a custom card to your dashboard
 
 
 ```yaml
-type: 'custom:collapsable-cards'
+type: 'custom:collapsable-card'
 title: Office
 cards:
   - type: entities
@@ -61,3 +61,32 @@ cards:
       - entity: sensor.ross_work_laptop_is_on
     show_header_toggle: false
 ```
+
+## Development
+
+This repository is an older single-file custom card, not a full `boilerplate-card`
+project with `src/` and `dist/` directories. A repo-specific devcontainer setup is
+included so you can still develop and test it against a local Home Assistant
+instance without copying files into a separate HA install.
+
+If you are looking for the official Home Assistant development environment for
+Home Assistant repositories such as Core, use the developer docs:
+
+- https://developers.home-assistant.io/docs/development_environment/
+- https://developers.home-assistant.io/docs/setup_devcontainer_environment/
+
+This repository now follows the same overall devcontainer pattern, but adapts it
+for a standalone custom card repository. The workspace container is built from a
+local `Dockerfile.dev`, and a separate Home Assistant container is used for
+custom card testing instead of Home Assistant Core's `script/setup` workflow.
+
+1. Install Docker Desktop with Docker Compose v2 support and make sure it is running.
+2. Install the VS Code Dev Containers extension.
+3. Open this repository in VS Code.
+4. Run `Dev Containers: Reopen in Container`.
+5. Open the forwarded `Home Assistant` port from VS Code.
+6. Complete onboarding to create the first owner account.
+7. The dev config also keeps the `dev` / `dev` command-line auth provider available for later logins.
+8. Edit `collapsable-card.js` and refresh the browser to test changes.
+
+More detail is in `.devcontainer/README.md`.

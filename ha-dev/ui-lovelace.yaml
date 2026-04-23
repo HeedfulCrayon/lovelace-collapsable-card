@@ -1,0 +1,97 @@
+title: Collapsable Card Dev
+views:
+  - title: Playground
+    path: playground
+    icon: mdi:test-tube
+    cards:
+      - type: markdown
+        content: |
+          This dashboard loads the repository version of `collapsable-card.js`.
+
+          Resource URL:
+          `/local/lovelace-collapsable-card/collapsable-card.js?v=dev`
+
+          Edit the source file, then refresh the page to test changes.
+
+      - type: entities
+        title: Demo Entities
+        entities:
+          - entity: input_boolean.office_lamp
+          - entity: input_boolean.desk_fan
+          - entity: input_boolean.monitor_light
+          - entity: input_boolean.background_music
+          - entity: input_boolean.notifications
+
+      - type: custom:collapsable-card
+        title: Basic Example
+        defaultOpen: true
+        cards:
+          - type: entities
+            title: Office Controls
+            entities:
+              - entity: input_boolean.office_lamp
+              - entity: input_boolean.desk_fan
+              - entity: input_boolean.monitor_light
+
+      - type: custom:collapsable-card
+        title: Contain-Toggled Example
+        defaultOpen: contain-toggled
+        cards:
+          - type: entities
+            title: Active Items
+            entities:
+              - entity: input_boolean.background_music
+              - entity: input_boolean.notifications
+
+      - type: custom:collapsable-card
+        title: More Devices
+        expand_text: More Devices
+        collapse_text: Less Devices
+        content_alignment: center
+        expand_upward: true
+        show_icon: false
+        cards:
+          - type: grid
+            square: false
+            columns: 2
+            cards:
+              - type: button
+                name: Sensors
+                icon: mdi:leak
+                tap_action:
+                  action: navigate
+                  navigation_path: /lovelace/sensors
+              - type: button
+                name: Sprinklers
+                icon: mdi:sprinkler-variant
+                tap_action:
+                  action: navigate
+                  navigation_path: /lovelace/sprinkler
+
+  - title: Sensors
+    path: sensors
+    icon: mdi:leak
+    cards:
+      - type: markdown
+        content: |
+          Simple destination view for the built-in button navigation test.
+
+      - type: entities
+        title: Sensor Demo
+        entities:
+          - entity: input_boolean.office_lamp
+          - entity: input_boolean.monitor_light
+
+  - title: Sprinklers
+    path: sprinkler
+    icon: mdi:sprinkler-variant
+    cards:
+      - type: markdown
+        content: |
+          Simple destination view for the built-in button navigation test.
+
+      - type: entities
+        title: Sprinkler Demo
+        entities:
+          - entity: input_boolean.background_music
+          - entity: input_boolean.notifications
